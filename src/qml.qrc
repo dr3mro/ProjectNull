@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>images/icon.ico</file>
+        <file>images/mute.png</file>
+        <file>images/playPauseIcon.png</file>
+    </qresource>
+</RCC>

@@ -1,41 +1,44 @@
 QT += quick multimedia qml
-RC_ICONS=icon.ico
-CONFIG += c++11 static
+
+CONFIG += c++14 static
 CONFIG -= qtquickcompiler
+CONFIG += lrelease
+CONFIG += embed_translations
+
+RC_ICONS=src/images/icon.ico
+
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += \
-        datahelper.cpp \
-        main.cpp \
-        playerengine.cpp \
-        singleinstance.cpp \
-        videocapturedetector.cpp
-
-RESOURCES += qml.qrc
+RESOURCES += src/qml.qrc
 
 TRANSLATIONS += \
-    ProjectNull_ar_EG.ts
-CONFIG += lrelease
-CONFIG += embed_translations
+    src/ProjectNull_ar_EG.ts
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH = src/qml/
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
-QML_DESIGNER_IMPORT_PATH =
+QML_DESIGNER_IMPORT_PATH = src/qml
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+SOURCES += \
+        src/datahelper.cpp \
+        src/main.cpp \
+        src/playerengine.cpp \
+        src/singleinstance.cpp
+
 HEADERS += \
-    datahelper.h \
-    playerengine.h \
-    singleinstance.h \
-    videocapturedetector.h
+    src/datahelper.h \
+    src/playerengine.h \
+    src/singleinstance.h
 
 DISTFILES += \
-    icon.ico
+    ReadMe.txt \
+    ToDo.txt \
+    src/images/icon.ico
