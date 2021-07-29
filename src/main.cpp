@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 
     // The Magic code is here
 #ifdef Q_OS_WIN
-    SetWindowDisplayAffinity(GetActiveWindow(),WDA_EXCLUDEFROMCAPTURE);
+    SetWindowDisplayAffinity(GetActiveWindow(),WDA_MONITOR);
 #endif
     // this is loop event handler that if close the app will quit
     return app.exec();

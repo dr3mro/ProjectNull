@@ -97,8 +97,8 @@ ApplicationWindow {
 
         icon.color      : "transparent" // cool
         icon.source     : "qrc:/images/playPauseIcon.png" // I love this icon
-        icon.width      : playPauseButton.width // so it fill button
-        icon.height     : playPauseButton.height // I dont know why not that is the default
+        icon.width      : playPauseButton.width * 2 // so it fill button
+        icon.height     : playPauseButton.height * 2 // I dont know why not that is the default
 
         // key bindings
 
