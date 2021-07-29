@@ -1,0 +1,7 @@
+ToDo
+1) copy exe on first launch to userData to keep it save (install)
+2) add time elapsed / timer remaining
+3) add MacOs platform specific code
+4) check if klite not installed then install if needed
+5) consider lbmpv if 4 not fasable
+6) create consts file to make changes cross code simpler
