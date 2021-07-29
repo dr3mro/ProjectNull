@@ -14,7 +14,6 @@
 #include "playerengine.h"
 #include "singleinstance.h"
 
-// the following incluse is for getting list of running processes under windows 10
 #ifdef Q_OS_WIN
 #include <Windows.h>
 #include <stdio.h>
@@ -22,7 +21,7 @@
 #include <tlhelp32.h>
 #include <WinUser.h>
 #endif
-// end of windows 10 code
+
 
 
 /*  Protocol Register to make this video player the default app to
