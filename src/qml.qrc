@@ -4,5 +4,7 @@
         <file>images/icon.ico</file>
         <file>images/mute.png</file>
         <file>images/playPauseIcon.png</file>
+        <file>images/icon.icns</file>
+        <file>images/icon.png</file>
     </qresource>
 </RCC>

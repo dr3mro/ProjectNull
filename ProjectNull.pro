@@ -5,7 +5,12 @@ CONFIG -= qtquickcompiler
 CONFIG += lrelease
 CONFIG += embed_translations
 
-RC_ICONS=src/images/icon.ico
+mac:QMAKE_INFO_PLIST = src/info.plist
+mac:LIBS += -framework Carbon
+mac:ICON = src/images/icon.icns
+
+
+win32:RC_ICONS=src/images/icon.ico
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
