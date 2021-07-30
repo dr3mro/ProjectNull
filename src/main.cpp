@@ -28,7 +28,7 @@
 #endif
 
 #ifdef Q_OS_MACOS
-#include "fileopenevent.h"
+#include "src/mac/fileopenevent.h"
 #include "datahelper.h"
 #include "mac/darwincapturepreventer.h"
 #endif
@@ -147,10 +147,14 @@ int main(int argc, char *argv[])
     // The Magic code is goes here
 
 #ifdef Q_OS_MACOS
-    QTimer x;
-    x.start(1000);
+    QWindow *mWin = app.allWindows().last();
     DarwinCapturePreventer dcp(app,nullptr);
-    QObject::connect(&x,&QTimer::timeout,&dcp,&DarwinCapturePreventer::update);
+    // detect window move or resize
+    QObject::connect(mWin,&QWindow::xChanged,&dcp,&DarwinCapturePreventer::update);
+    QObject::connect(mWin,&QWindow::yChanged,&dcp,&DarwinCapturePreventer::update);
+    QObject::connect(mWin,&QWindow::widthChanged,&dcp,&DarwinCapturePreventer::update);
+    QObject::connect(mWin,&QWindow::heightChanged,&dcp,&DarwinCapturePreventer::update);
+
 #endif
 
 #ifdef Q_OS_WIN

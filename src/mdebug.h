@@ -21,7 +21,7 @@
 #endif
 
 #ifdef Q_OS_MACOS
-#define LOGFILE "~/TheVideoPlayerLog.txt"
+#define LOGFILE "../../../TheVideoPlayerLog.txt"
 #endif
 
 

@@ -11,6 +11,7 @@
  * keep it simple
  * :)
  */
+#include <QtGlobal>
 #ifdef Q_OS_MACOS
 #ifndef DARWINCAPTUREPREVENTER_H
 #define DARWINCAPTUREPREVENTER_H
@@ -19,7 +20,6 @@
 #include <QGuiApplication>
 #include <QWindow>
 #include <QDebug>
-#include <QtGlobal>
 
 class DarwinCapturePreventer : public QObject
 {

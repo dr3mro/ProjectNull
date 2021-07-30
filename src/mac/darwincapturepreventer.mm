@@ -70,8 +70,6 @@ BOOL preventWindowCaptureForWindow(NSWindow *window)
         CGSReleaseRegion(regionOut);
         return NO;
     }
-    //qDebug() << windowRectOut.size.height;
-    //qDebug() << windowRectOut.size.width;
     CGSReleaseRegion(regionOut);
 #endif
     return YES;
