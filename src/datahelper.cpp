@@ -19,14 +19,20 @@ QString DataHelper::processURL(const QString &rawArgs)
     // projectNull::[file:///C:/Users/Amr/Downloads/video1.mp4]
     // or that
     // projectNull::[http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4]
-    QString newURL = list_args.at(1);
+
+    QString newURL;
+    if(list_args.count() <= 1)
+        newURL = list_args.at(0);
+    else
+        newURL = list_args.at(1);
 
     // now we remove the preceeding "projectNull::["
-    newURL.remove("projectNull::[",Qt::CaseInsensitive);
-
+    newURL.remove("projectnull::%5B",Qt::CaseInsensitive);
+    newURL.remove("projectnull::[",Qt::CaseInsensitive);
     // now we remove the trailing "]"
+    newURL.remove("%5D");
     newURL.remove("]");
-
+    qDebug() << "post processing" << newURL;
     // reurning a clean URL
     return newURL;
 }

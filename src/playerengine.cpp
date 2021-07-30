@@ -15,9 +15,16 @@ void PlayerEngine::startPlayingMovie()
     timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
 }
 
+QString &PlayerEngine::getVideoUrl()
+{
+    return m_Url;
+}
+
 void PlayerEngine::setVideoUrl(const QString &_url)
 {
+    qDebug() << "videoset: " << _url;
     m_Url = _url; // sets the url
+    emit playNow(m_Url);
     timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
 }
 ////////////////////////////////////////  END  ///////////////////////////////////////

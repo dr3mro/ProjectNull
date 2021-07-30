@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QDebug>
 
 class PlayerEngine : public QObject
 {
@@ -17,6 +18,7 @@ public:
     explicit PlayerEngine(const QString & _url = QString(), QObject *parent = nullptr);
     // public method to start playback ASAP and squedule the fadeout of playpausebutton
     void startPlayingMovie();
+    QString &getVideoUrl();
 public slots:
     // public slot (method) to set URL
     void setVideoUrl(const QString &_url);

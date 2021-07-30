@@ -8,7 +8,7 @@ CONFIG += embed_translations
 mac:QMAKE_INFO_PLIST = src/info.plist
 mac:LIBS += -framework Carbon
 mac:ICON = src/images/icon.icns
-
+mac:DEFINES += INCLUDE_PRIVATE_API=1
 
 win32:RC_ICONS=src/images/icon.ico
 
@@ -33,13 +33,17 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 SOURCES += \
+        src/darwincapturepreventer.mm \
         src/datahelper.cpp \
+        src/fileopenevent.cpp \
         src/main.cpp \
         src/playerengine.cpp \
         src/singleinstance.cpp
 
 HEADERS += \
+    src/darwincapturepreventer.h \
     src/datahelper.h \
+    src/fileopenevent.h \
     src/playerengine.h \
     src/singleinstance.h
 
