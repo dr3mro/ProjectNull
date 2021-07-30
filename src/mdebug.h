@@ -21,10 +21,8 @@
 #endif
 
 #ifdef Q_OS_MACOS
-#define LOGFILE "../../../TheVideoPlayerLog.txt"
+#define LOGFILE "./TheVideoPlayerLog.txt"
 #endif
-
-
 #define mDebug() QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO).debug()
 #else
 #define mDebug() QNoDebug()
