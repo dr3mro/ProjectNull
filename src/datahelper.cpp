@@ -33,7 +33,9 @@ QString DataHelper::processURL(const QString &rawArgs)
 #endif
 
 #ifdef Q_OS_WIN
-    newURL = list_args.at(1);
+    if(list_args.count() >= 2 )
+        newURL = list_args.at(1);
+
     newURL.remove("projectnull::[",Qt::CaseInsensitive);
     newURL.remove("]");
 #endif

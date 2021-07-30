@@ -34,14 +34,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 HEADERS += \
-    defaults.h \
     src/datahelper.h \
     src/logger.h \
     src/mdebug.h \
     src/playerengine.h \
     src/singleinstance.h \
-    src/win/ProtocolRegister.h \
-    src/win/ProtocolRegister.hpp \
     src/win/protocolregister.h
 
 SOURCES += \
