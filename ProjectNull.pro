@@ -10,6 +10,7 @@ mac:LIBS += -framework Carbon
 mac:ICON = src/images/icon.icns
 mac:DEFINES += INCLUDE_PRIVATE_API=1
 
+win32-g++:DEFINES += _WIN32_WINNT=0x0602
 win32:RC_ICONS=src/images/icon.ico
 
 # You can make your code fail to compile if it uses deprecated APIs.
