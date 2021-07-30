@@ -3,21 +3,37 @@
 //                                Coded by  Amr Osman                               //
 //                                     july 2021                                    //
 ////////////////////////////////  As a Freelance Project  ////////////////////////////
-
-#ifndef DATAHELPER_H
-#define DATAHELPER_H
+/*
+ * Here is the Magic code for macOS detection of
+ * Screen capture signals
+ * This is undocumented api
+ * may break sometime
+ * keep it simple
+ * :)
+ */
+#ifdef Q_OS_MACOS
+#ifndef DARWINCAPTUREPREVENTER_H
+#define DARWINCAPTUREPREVENTER_H
 
 #include <QObject>
-#include "mdebug.h"
+#include <QGuiApplication>
+#include <QWindow>
+#include <QDebug>
+#include <QtGlobal>
 
-class DataHelper : public QObject
+class DarwinCapturePreventer : public QObject
 {
     Q_OBJECT
 public:
-    explicit DataHelper(QObject *parent = nullptr);
-    static QString processURL(const QString &rawArgs);
+    explicit DarwinCapturePreventer(QGuiApplication & app, QObject *parent = nullptr);
+    void update();
+private:
+    QGuiApplication & app;
+signals:
+
 };
-#endif // DATAHELPER_H
+#endif // DARWINCAPTUREPREVENTER_H
+#endif
 ////////////////////////////////////////  END  ///////////////////////////////////////
 //                          Screen Capture Proof Video Player                       //
 //                                 Coded by Amr Osman                               //

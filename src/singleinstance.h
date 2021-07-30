@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QLocalServer>
 #include <QLocalSocket>
-#include "datahelper.h"
+#include "src/datahelper.h"
 /*
  * This class is responsible for keeping only one instance of the application running
  * at all time and it will pass the app args to the current instance running and also

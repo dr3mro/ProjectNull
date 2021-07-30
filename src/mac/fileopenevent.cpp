@@ -3,32 +3,33 @@
 //                                Coded by  Amr Osman                               //
 //                                     july 2021                                    //
 ////////////////////////////////  As a Freelance Project  ////////////////////////////
-#include "playerengine.h"
+/* Because MacOs does not work like windows
+ * and it pass the file as open with signals
+ * we had to write this open with handler
+ * DAMN MacOS
+ */
+#include "fileopenevent.h"
 
-PlayerEngine::PlayerEngine(const QString &_url, QObject *parent) : QObject(parent),
-    m_Url(_url){
+FileOpenEvent::FileOpenEvent(QObject *parent) : QObject(parent){
 }
 
-void PlayerEngine::startPlayingMovie()
+bool FileOpenEvent::eventFilter(QObject* obj, QEvent* event)
 {
-    emit playNow(m_Url); // play the current URL
-    timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
-}
+    QString url;
+    if (event->type() == QEvent::FileOpen)
+    {
+        QFileOpenEvent* fileEvent = static_cast<QFileOpenEvent*>(event);
+        if (!fileEvent->url().isEmpty())
+            url = fileEvent->url().toString();
 
-QString &PlayerEngine::getVideoUrl()
-{
-    return m_Url;
-}
-
-void PlayerEngine::setVideoUrl(const QString &_url)
-{
-    m_Url = _url; // sets the url
-    qDebug() << "videoset: " << _url;
-    emit playNow(m_Url);
-    timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
+        // here we try to process the url
+        emit urlOpened(DataHelper::processURL(url));
+        return false;
+    }
+    return QObject::eventFilter(obj, event);
 }
 ////////////////////////////////////////  END  ///////////////////////////////////////
 //                          Screen Capture Proof Video Player                       //
 //                                 Coded by Amr Osman                               //
 //                                     july 2021                                    //
-////////////////////////////////  As a Freelance Project  ////////////////////////////
+////////////////////////////////  As a Freelance Project  ///////////////////////////

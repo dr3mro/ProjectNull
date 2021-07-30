@@ -3,21 +3,28 @@
 //                                Coded by  Amr Osman                               //
 //                                     july 2021                                    //
 ////////////////////////////////  As a Freelance Project  ////////////////////////////
-
-#ifndef DATAHELPER_H
-#define DATAHELPER_H
+#ifndef FILEOPENEVENT_H
+#define FILEOPENEVENT_H
 
 #include <QObject>
-#include "mdebug.h"
+#include <QFileOpenEvent>
+#include <QDebug>
+#include "src/datahelper.h"
 
-class DataHelper : public QObject
+class FileOpenEvent: public QObject
 {
     Q_OBJECT
 public:
-    explicit DataHelper(QObject *parent = nullptr);
-    static QString processURL(const QString &rawArgs);
+    explicit FileOpenEvent(QObject *parent = nullptr); //CTOR
+protected:
+    bool eventFilter(QObject* obj, QEvent* event);
+signals:
+    // This signal is emited when a new URL is sent from the OS
+    void urlOpened(const QString url);
+
 };
-#endif // DATAHELPER_H
+
+#endif // FILEOPENEVENT_H
 ////////////////////////////////////////  END  ///////////////////////////////////////
 //                          Screen Capture Proof Video Player                       //
 //                                 Coded by Amr Osman                               //

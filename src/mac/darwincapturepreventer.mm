@@ -1,6 +1,13 @@
+///////////////////////////////////  ProjectNull  ////////////////////////////////////
+//                          Screen Capture Proof Video Player                       //
+//                                Coded by  Amr Osman                               //
+//                                     july 2021                                    //
+////////////////////////////////  As a Freelance Project  ////////////////////////////
+#include <QtGlobal>
+#ifdef Q_OS_MACOS
 #include "darwincapturepreventer.h"
 #import <Appkit/NSWindow.h>
-
+#endif
 #if defined(INCLUDE_PRIVATE_API) && INCLUDE_PRIVATE_API
 
 #import <Cocoa/Cocoa.h>
@@ -72,6 +79,8 @@ BOOL preventWindowCaptureForWindow(NSWindow *window)
 DarwinCapturePreventer::DarwinCapturePreventer(QGuiApplication &_app, QObject *parent) : QObject(parent),
     app(_app)
 {
+    // this is ctor is used to define window size and position so it will draw a greybox over the window
+    // if screen recording is detected
     NSWindow * window	= reinterpret_cast<NSView *>(app.allWindows().at(0)->winId()).window;
     window.sharingType = NSWindowSharingType::NSWindowSharingNone;
     preventWindowCaptureForWindow(window);
@@ -80,6 +89,9 @@ DarwinCapturePreventer::DarwinCapturePreventer(QGuiApplication &_app, QObject *p
 
 void DarwinCapturePreventer::update()
 {
+    // this is update slot is used to update window size and position so it will draw a greybox over the window
+    // if screen recording is detected
+
     NSWindow * window	= reinterpret_cast<NSView *>(app.allWindows().at(0)->winId()).window;
     window.sharingType = NSWindowSharingType::NSWindowSharingNone;
     preventWindowCaptureForWindow(window);

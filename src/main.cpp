@@ -11,156 +11,104 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QQmlContext>
-#include "playerengine.h"
-#include "singleinstance.h"
+#include "src/playerengine.h"
+#include "src/singleinstance.h"
+#include "src/mdebug.h"
+
+
+#ifdef LOGEDNABLED
+#include "src/logger.h"
+#endif
+
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
-#include <stdio.h>
-#include <psapi.h>
-#include <tlhelp32.h>
 #include <WinUser.h>
+#include "src/win/protocolregister.h"
 #endif
 
-#ifdef Q_OS_DARWIN
+#ifdef Q_OS_MACOS
 #include "fileopenevent.h"
 #include "datahelper.h"
-#include "darwincapturepreventer.h"
+#include "mac/darwincapturepreventer.h"
 #endif
 
-void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
-    QByteArray localMsg = msg.toLocal8Bit();
-    switch (type) {
-    case QtDebugMsg:
-        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtInfoMsg:
-        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtWarningMsg:
-        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtCriticalMsg:
-        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        break;
-    case QtFatalMsg:
-        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-        abort();
-    }
 
-    QFile outFile("/Users/amr/Desktop/log.txt");
-    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&outFile);
-    ts << msg << '\n';
-}
-
-/*  Protocol Register to make this video player the default app to
-    plabyback urls in the form of
-
-    projectNull::[file:///C:/Users/Amr/Downloads/video1.mp4]
-
-    projectNull::[http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4]
-
-    just pass any as first app argument and it will be played back either local or remote
-
-    Platform independent code needs to be added here
-
-    This code works only under windows
-
-ToDo :
-    Add MacOs altarnate code.
-*/
-#ifdef Q_OS_WIN
-void registerProtocol(){
-
-    // Set the ptotocol Name to (projectNull)
-    const QString urlScheme = "projectNull";
-
-    // Get the current executable path to remmember and always open with
-    const QString appPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
-
-    // This is the open with path (in windows)
-    const QString regPath = QStringLiteral("HKEY_CURRENT_USER\\Software\\Classes\\") + urlScheme;
-
-    // create a scopped poniter to avoid calling delete later
-    QScopedPointer<QSettings> reg(new QSettings(regPath, QSettings::NativeFormat));
-
-    // Starting to set the Registery keys
-
-    reg->setValue(QStringLiteral("Default"), "video player");
-    reg->setValue(QStringLiteral("URL Protocol"), QString());
-
-    reg->beginGroup(QStringLiteral("DefaultIcon"));
-    reg->setValue(QStringLiteral("Default"), QString("%1,1").arg(appPath));
-    reg->endGroup();
-
-    reg->beginGroup(QStringLiteral("shell"));
-    reg->beginGroup(QStringLiteral("open"));
-    reg->beginGroup(QStringLiteral("command"));
-
-    reg->setValue(QStringLiteral("Default"), appPath + QLatin1String(" %1"));
-    // end of protocol code under windows 10
-
-}
-#endif
 int main(int argc, char *argv[])
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // as of Qt 6.0 this is the default behaviour so this code is for backward compatibility only //
     //                                                                                            //
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)                                                        //
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);                                  //
-#endif                                                                                            //
+                              #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)                          //
+                     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);                 //
+                              #endif                                                              //
     //                                                                                            //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Create a new app object
     QGuiApplication app(argc, argv);
 
-    // Log Message Handler
-    qInstallMessageHandler(myMessageOutput);
-
-    // Set the executable path as Current Working Directory
-    QDir::setCurrent(qApp->applicationDirPath());
-
 #ifdef Q_OS_WIN
     // Call register protocol code
     registerProtocol();
+
+    // Set the executable path as Current Working Directory
+    QDir::setCurrent(qApp->applicationDirPath());
 #endif
+
+#ifdef LOGEDNABLED
+    // Log Message Handler
+    qInstallMessageHandler(myMessageLogger);
+    qSetMessagePattern("[%{type}] %{appname} (%{file}:%{line}) - %{message}");
+#endif
+
+    mDebug() << "initialising...";
+
     // Start the player Engine ( actually it only do some stuff not the real video playback )
     PlayerEngine playerengine (DataHelper::processURL(qApp->arguments().join(",")));
+
+    mDebug() << "PlayerEngine Started ...";
 
     // Start the single instance Server to prevent more than one instance at the same time
     SingleInstance singleInstance;
 
+    mDebug() << "SingleInstance localserver Started ...";
+
     // Create a string to store the video URL
     QString & videoUrl = playerengine.getVideoUrl();
 
-#ifdef Q_OS_DARWIN
+    mDebug() << "VideoUrl linked ...";
+
+#ifdef Q_OS_MACOS
     FileOpenEvent foef;
     QObject::connect(&foef,&FileOpenEvent::urlOpened,&playerengine,&PlayerEngine::setVideoUrl);
-
     qApp->installEventFilter(&foef);
-
+    mDebug() << "DARWIN fileopener initialised ...";
 #endif
 
     // We here connect the single instance DoAction that is called when a new instance is started
     // it will call setVideoUrl in PlayerEngine so the current running app will get the url from
     // the newly started instance
     QObject::connect(&singleInstance,&SingleInstance::doAction,&playerengine,&PlayerEngine::setVideoUrl);
+    mDebug() << "SingleInstance connected ...";
+
 
     // here we close self if found a previous instance is running after sending the url
-    if(singleInstance.hasPrevious("com.nullproject.videoPlayer", videoUrl))
+    if(singleInstance.hasPrevious("com.nullproject.videoPlayer", videoUrl)){
+        mDebug() << "Found another instance Exiting ...";
         exit(1);
+    }
+
 
     // start listening for new instances from now on if found no other instances running
     // and listen locally to the domain
     singleInstance.listen("com.nullproject.videoPlayer");
-
+    mDebug() << "SingleInstance listening ...";
 
     // create translator object
     QTranslator translator;
+    mDebug() << "translator created ...";
+
 
     // search if current OS locale is found then load it
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -168,6 +116,7 @@ int main(int argc, char *argv[])
         const QString baseName = "ProjectNull_" + QLocale(locale).name();
         if (translator.load(":/i18n/" + baseName)) {
             app.installTranslator(&translator);
+            mDebug() << "translator loaded ...";
             break;
         }
     }
@@ -195,18 +144,20 @@ int main(int argc, char *argv[])
     // lets start the video now
     playerengine.startPlayingMovie();
 
+    // The Magic code is goes here
 
-
-    // The Magic code is here
-#ifdef Q_OS_WIN
-    SetWindowDisplayAffinity(GetActiveWindow(),WDA_MONITOR);
-#endif
-    // this is loop event handler that if close the app will quit
+#ifdef Q_OS_MACOS
     QTimer x;
     x.start(1000);
     DarwinCapturePreventer dcp(app,nullptr);
     QObject::connect(&x,&QTimer::timeout,&dcp,&DarwinCapturePreventer::update);
+#endif
 
+#ifdef Q_OS_WIN
+    SetWindowDisplayAffinity(GetActiveWindow(),WDA_MONITOR);
+#endif
+    // this is loop event handler that if close the app will quit
+    mDebug() << "App is running ...";
     return app.exec();
 }
 

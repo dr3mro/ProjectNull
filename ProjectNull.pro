@@ -5,7 +5,7 @@ CONFIG -= qtquickcompiler
 CONFIG += lrelease
 CONFIG += embed_translations
 
-mac:QMAKE_INFO_PLIST = src/info.plist
+mac:QMAKE_INFO_PLIST = src/mac/info.plist
 mac:LIBS += -framework Carbon
 mac:ICON = src/images/icon.icns
 mac:DEFINES += INCLUDE_PRIVATE_API=1
@@ -32,22 +32,34 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+
+HEADERS += \
+    defaults.h \
+    src/datahelper.h \
+    src/logger.h \
+    src/mdebug.h \
+    src/playerengine.h \
+    src/singleinstance.h \
+    src/win/ProtocolRegister.h \
+    src/win/ProtocolRegister.hpp \
+    src/win/protocolregister.h
+
 SOURCES += \
-        src/darwincapturepreventer.mm \
         src/datahelper.cpp \
-        src/fileopenevent.cpp \
         src/main.cpp \
         src/playerengine.cpp \
         src/singleinstance.cpp
 
-HEADERS += \
-    src/darwincapturepreventer.h \
-    src/datahelper.h \
-    src/fileopenevent.h \
-    src/playerengine.h \
-    src/singleinstance.h
+mac:HEADERS +=\
+    src/mac/fileopenevent.h \
+    src/mac/darwincapturepreventer.h
+
+mac:SOURCES += \
+    src/mac/fileopenevent.cpp \
+    src/mac/darwincapturepreventer.mm
 
 DISTFILES += \
     ReadMe.txt \
     ToDo.txt \
-    src/images/icon.ico
+    src/images/icon.ico \
+    src/mac/Info.plist
