@@ -46,6 +46,7 @@ ApplicationWindow {
         PlayerEngine.onHidePlayPauseButton.connect(onHidePlayPauseButton)
 
     }
+
     ///////////////////////// js code ///////////////////////////////////////
 
     // js function to toggle full screen on user request

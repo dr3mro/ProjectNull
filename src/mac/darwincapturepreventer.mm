@@ -75,14 +75,7 @@ BOOL preventWindowCaptureForWindow(NSWindow *window)
     return YES;
 }
 DarwinCapturePreventer::DarwinCapturePreventer(QGuiApplication &_app, QObject *parent) : QObject(parent),
-    app(_app)
-{
-    // this is ctor is used to define window size and position so it will draw a greybox over the window
-    // if screen recording is detected
-    NSWindow * window	= reinterpret_cast<NSView *>(app.allWindows().at(0)->winId()).window;
-    window.sharingType = NSWindowSharingType::NSWindowSharingNone;
-    preventWindowCaptureForWindow(window);
-
+    app(_app){
 }
 
 void DarwinCapturePreventer::update()
@@ -93,5 +86,6 @@ void DarwinCapturePreventer::update()
     NSWindow * window	= reinterpret_cast<NSView *>(app.allWindows().at(0)->winId()).window;
     window.sharingType = NSWindowSharingType::NSWindowSharingNone;
     preventWindowCaptureForWindow(window);
+    mDebug() << "DarwinCapturePreventer.update() called";
 }
 #endif

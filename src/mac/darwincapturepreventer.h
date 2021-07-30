@@ -19,14 +19,14 @@
 #include <QObject>
 #include <QGuiApplication>
 #include <QWindow>
-#include <QDebug>
+#include "../mdebug.h"
 
 class DarwinCapturePreventer : public QObject
 {
     Q_OBJECT
 public:
     explicit DarwinCapturePreventer(QGuiApplication & app, QObject *parent = nullptr);
-    void update();
+    Q_INVOKABLE void update();
 private:
     QGuiApplication & app;
 signals:

@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
     QObject::connect(mWin,&QWindow::widthChanged,&dcp,&DarwinCapturePreventer::update);
     QObject::connect(mWin,&QWindow::heightChanged,&dcp,&DarwinCapturePreventer::update);
 
+    QTimer::singleShot(3000,&dcp,&DarwinCapturePreventer::update);
 #endif
 
 #ifdef Q_OS_WIN
