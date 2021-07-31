@@ -69,15 +69,10 @@ ApplicationWindow {
     }
 
     // js code to set url and restore from minimized
-    function showNow(_url){
+    function showNow(){
         mainWindow.visibility = Window.Windowed;
-        mediaPlayer.source = _url;
     }
 
-    // js code to set url
-    function playNow(_url){
-        mediaPlayer.source = _url;
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////
     //                                                                                 //
@@ -196,14 +191,9 @@ ApplicationWindow {
 
         MediaPlayer {
             id: mediaPlayer
-
+            source: PlayerEngine.m_Url
             // auto start
             autoPlay: true
-
-            // auto start with change video url
-            onSourceChanged: {
-                mediaPlayer.play();
-            }
 
             // show playPauseButton when stopped
             onStopped: {

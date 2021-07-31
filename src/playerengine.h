@@ -14,6 +14,7 @@
 class PlayerEngine : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString m_Url READ getVideoUrl WRITE setVideoUrl NOTIFY videoUrlChanged)
 public:
     explicit PlayerEngine(const QString & _url = QString(), QObject *parent = nullptr);
     // public method to start playback ASAP and squedule the fadeout of playpausebutton
@@ -28,11 +29,10 @@ private:
     QTimer timer; // timer to hide the playpausebutton after timeout
 
 signals:
-    void playNow(const QString& _url); // this signal will start playnow
     void hidePlayPauseButton(); //this signal will hide the playPauseButton
+    void videoUrlChanged();
    /*
     * Those signals above are connected in the QML file (MIAN.QML)
-    *    PlayerEngine.onPlayNow.connect(playNow)
     *    PlayerEngine.onHidePlayPauseButton.connect(onHidePlayPauseButton)
     */
 };

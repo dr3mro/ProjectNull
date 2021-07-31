@@ -11,7 +11,6 @@ PlayerEngine::PlayerEngine(const QString &_url, QObject *parent) : QObject(paren
 
 void PlayerEngine::startPlayingMovie()
 {
-    emit playNow(m_Url); // play the current URL
     timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
 }
 
@@ -24,7 +23,7 @@ void PlayerEngine::setVideoUrl(const QString &_url)
 {
     m_Url = _url; // sets the url
     qDebug() << "videoset: " << _url;
-    emit playNow(m_Url);
+    emit videoUrlChanged();
     timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
 }
 ////////////////////////////////////////  END  ///////////////////////////////////////
