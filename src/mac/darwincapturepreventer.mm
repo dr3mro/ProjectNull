@@ -76,6 +76,8 @@ BOOL preventWindowCaptureForWindow(NSWindow *window)
 }
 DarwinCapturePreventer::DarwinCapturePreventer(QGuiApplication &_app, QObject *parent) : QObject(parent),
     app(_app){
+    connect(&init,&QTimer::timeout,this,&DarwinCapturePreventer::update);
+    init.start(100);
 }
 
 void DarwinCapturePreventer::update()
@@ -86,6 +88,10 @@ void DarwinCapturePreventer::update()
     NSWindow * window	= reinterpret_cast<NSView *>(app.allWindows().at(0)->winId()).window;
     window.sharingType = NSWindowSharingType::NSWindowSharingNone;
     preventWindowCaptureForWindow(window);
-    mDebug() << "DarwinCapturePreventer.update() called";
+    if(window.visible)
+        init.stop();
+
+    mDebug() << "DarwinCapturePreventer.update() called" << window.visible;
+
 }
 #endif

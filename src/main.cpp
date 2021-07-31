@@ -144,18 +144,11 @@ int main(int argc, char *argv[])
     // lets start the video now
     playerengine.startPlayingMovie();
 
-    // The Magic code is goes here
+
+    // The Magic code is goes here that make screen capture impossible
 
 #ifdef Q_OS_MACOS
-    QWindow *mWin = app.allWindows().last();
     DarwinCapturePreventer dcp(app,nullptr);
-    // detect window move or resize
-    QObject::connect(mWin,&QWindow::xChanged,&dcp,&DarwinCapturePreventer::update);
-    QObject::connect(mWin,&QWindow::yChanged,&dcp,&DarwinCapturePreventer::update);
-    QObject::connect(mWin,&QWindow::widthChanged,&dcp,&DarwinCapturePreventer::update);
-    QObject::connect(mWin,&QWindow::heightChanged,&dcp,&DarwinCapturePreventer::update);
-
-    QTimer::singleShot(3000,&dcp,&DarwinCapturePreventer::update);
 #endif
 
 #ifdef Q_OS_WIN

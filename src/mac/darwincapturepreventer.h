@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QGuiApplication>
 #include <QWindow>
+#include <QTimer>
 #include "../mdebug.h"
 
 class DarwinCapturePreventer : public QObject
@@ -29,6 +30,7 @@ public:
     Q_INVOKABLE void update();
 private:
     QGuiApplication & app;
+    QTimer init;
 signals:
 
 };
