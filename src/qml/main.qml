@@ -36,10 +36,6 @@ ApplicationWindow {
     ////////////////////////////////////////////////////////////////////////
     // signal connect :)
     Component.onCompleted: {
-
-        // this signal is triggered when a we need to set a new video url
-        PlayerEngine.onPlayNow.connect(playNow)
-
         // this signal is triggered when a we need to set a new video url and show window if minimized
         SingleInstance.onDoAction.connect(showNow)
     }
@@ -224,7 +220,6 @@ ApplicationWindow {
             source: PlayerEngine.m_Url
             anchors.fill: parent
 
-            Component.onCompleted: player.play() // to early, will stopped by setSource()
         }
         // Mute icon
         Image{
