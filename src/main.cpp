@@ -14,7 +14,7 @@
 #include "src/playerengine.h"
 #include "src/singleinstance.h"
 #include "src/mdebug.h"
-
+#include "src/mdkplayer.h"
 
 #ifdef LOGEDNABLED
 #include "src/logger.h"
@@ -124,6 +124,10 @@ int main(int argc, char *argv[])
     // QML GUI Engine
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
+
+    QmlMDKPlayer mdkPlayer;
+
+    qmlRegisterType<QmlMDKPlayer>("MDKPlayer", 1, 0, "MDKPlayer");
 
     context->setContextProperty("PlayerEngine", &playerengine);     // give QML acces to PlayerEngine
     context->setContextProperty("SingleInstance", &singleInstance); // give QML acces to SingleInstance

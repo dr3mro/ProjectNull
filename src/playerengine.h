@@ -29,7 +29,6 @@ private:
     QTimer timer; // timer to hide the playpausebutton after timeout
 
 signals:
-    void hidePlayPauseButton(); //this signal will hide the playPauseButton
     void videoUrlChanged();
    /*
     * Those signals above are connected in the QML file (MIAN.QML)

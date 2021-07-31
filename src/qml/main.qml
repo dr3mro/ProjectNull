@@ -8,7 +8,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtMultimedia 5.15
 import QtQuick.Controls 2.15
-
+import MDKPlayer 1.0
 //Qml of video player GUI
 
 ApplicationWindow {
@@ -24,6 +24,7 @@ ApplicationWindow {
 
     // playbackMuted is used to store mute value
     property bool playbackMuted: false
+    property var seekWidth: calcSeekerWidth()
     ///////////////////////////////////////////////////////////////////////
     // enable double click on any point to full screen
     MouseArea{
@@ -41,10 +42,6 @@ ApplicationWindow {
 
         // this signal is triggered when a we need to set a new video url and show window if minimized
         SingleInstance.onDoAction.connect(showNow)
-
-        // auto hide play button after timoout
-        PlayerEngine.onHidePlayPauseButton.connect(onHidePlayPauseButton)
-
     }
 
     ///////////////////////// js code ///////////////////////////////////////
@@ -60,18 +57,51 @@ ApplicationWindow {
     // js function to toggle mute
     function muteToggle(){
         playbackMuted = !playbackMuted; // invert the mute var
-        mediaPlayer.muted = playbackMuted; // set mediaplayer to mute state
+        mediaPlayer.mute(playbackMuted); // set mediaplayer to mute state
     }
 
     // js code to auto hide the playPauseButton after a timout
     function onHidePlayPauseButton(){
-        playPauseButton.fadeOutOnStart();
+        fadeout.start();
     }
 
     // js code to set url and restore from minimized
     function showNow(){
         mainWindow.visibility = Window.Windowed;
     }
+
+    // js function to calculate seeker width
+    function calcSeekerWidth(){
+        return mediaPlayer.duration() > 0? progressBar.width * mediaPlayer.position() / mediaPlayer.duration() : 0
+    }
+
+    // js function to toggle playback
+
+    function playPause(){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            playPauseButton.opacity = 1;
+            seekbarUpdateTimer.stop();
+        }else{
+            mediaPlayer.play();
+            fadeout.start();
+            seekbarUpdateTimer.start();
+        }
+    }
+
+    ////////
+
+    Timer {
+        id:seekbarUpdateTimer
+        interval: 1000; running: true; repeat: true
+        onTriggered: {
+            seekWidth = calcSeekerWidth()
+        }
+    }
+
+
+    ///////
+
 
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +119,7 @@ ApplicationWindow {
         radius          : 128  //
         height          : 128  //
         width           : 128  //
+        opacity         : 0
         focus           : true // so it catched key events
 
         icon.color      : "transparent" // cool
@@ -100,14 +131,18 @@ ApplicationWindow {
 
         /* Space to play / pause playback
            it sets the playback state to the opposite of current */
-        Keys.onSpacePressed: mediaPlayer.playbackState == MediaPlayer.PlayingState ? mediaPlayer.pause() : mediaPlayer.play()
+        Keys.onSpacePressed: playPause();
 
         // seek back 5000 ms by left arrow key
-        Keys.onLeftPressed: mediaPlayer.seek(mediaPlayer.position - 5000)
-
+        Keys.onLeftPressed: {
+            mediaPlayer.seek(mediaPlayer.position() -10000);
+            seeker.width = calcSeekerWidth();
+        }
         // seek forward 5000 ms by right arrow key
-        Keys.onRightPressed: mediaPlayer.seek(mediaPlayer.position + 5000)
-
+        Keys.onRightPressed: {
+            mediaPlayer.seek(mediaPlayer.position() + 10000);
+            seeker.width = calcSeekerWidth();
+        }
         // exit full screen by ESC also F key will work too.
         Keys.onEscapePressed: {
             if( mainWindow.visibility === Window.FullScreen )
@@ -127,11 +162,7 @@ ApplicationWindow {
         }
 
         // toggle play pause when clicked on the button
-        onClicked: {
-            mediaPlayer.playbackState == MediaPlayer.PlayingState ? mediaPlayer.pause() : mediaPlayer.play()
-            if(MediaPlayer.playbackState)
-                playPauseButton.opacity=1
-        }
+        onClicked: playPause();
         // fade in and out by hovering the button
         onHoveredChanged: {
             if(hovered)
@@ -188,36 +219,13 @@ ApplicationWindow {
         z:99
         color: "black"
         anchors.fill: parent
-
-        MediaPlayer {
+        MDKPlayer {
             id: mediaPlayer
             source: PlayerEngine.m_Url
-            // auto start
-            autoPlay: true
-
-            // show playPauseButton when stopped
-            onStopped: {
-                playPauseButton.fadeInOnStart()
-            }
-
-            // show playPauseButton when paused
-            onPaused: {
-                playPauseButton.fadeInOnStart()
-            }
-            // hide playPauseButton when playing
-            onPlaying: {
-                playPauseButton.fadeOutOnStart();
-            }
-
-        }
-
-        VideoOutput {
-            id: video
             anchors.fill: parent
-            source: mediaPlayer
 
+            Component.onCompleted: player.play() // to early, will stopped by setSource()
         }
-
         // Mute icon
         Image{
             height: 32
@@ -241,14 +249,13 @@ ApplicationWindow {
         height             : 8
         color              : "Gray"
 
-
         // red ProgressBar
         Rectangle {
+            id             : seeker
             anchors.left   : parent.left
             anchors.top    : parent.top
             anchors.bottom : parent.bottom
-            // here we calculate the width as the current video position
-            width          : mediaPlayer.duration > 0? parent.width * mediaPlayer.position / mediaPlayer.duration : 0
+            width          : seekWidth
             color          : "red"
         }
 
@@ -258,9 +265,9 @@ ApplicationWindow {
             anchors.fill: parent
 
             onClicked: {
-                if (mediaPlayer.seekable)
-                    pos = mediaPlayer.duration * mouse.x/width
-                mediaPlayer.seek(pos)
+                pos = mouse.x / width * 1.0 * mediaPlayer.duration();
+                mediaPlayer.seek(pos);
+                seekWidth = calcSeekerWidth();
             }
         }
     }

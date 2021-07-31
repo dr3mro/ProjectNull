@@ -11,7 +11,6 @@ PlayerEngine::PlayerEngine(const QString &_url, QObject *parent) : QObject(paren
 
 void PlayerEngine::startPlayingMovie()
 {
-    timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
 }
 
 QString &PlayerEngine::getVideoUrl()
@@ -24,7 +23,6 @@ void PlayerEngine::setVideoUrl(const QString &_url)
     m_Url = _url; // sets the url
     qDebug() << "videoset: " << _url;
     emit videoUrlChanged();
-    timer.singleShot(2000,this,&PlayerEngine::hidePlayPauseButton); // call the hidePlayPauseButton after 2 sec
 }
 ////////////////////////////////////////  END  ///////////////////////////////////////
 //                          Screen Capture Proof Video Player                       //
