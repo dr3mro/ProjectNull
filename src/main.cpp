@@ -11,7 +11,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QQmlContext>
-#include "src/playerengine.h"
+#include "src/playercontroller.h"
 #include "src/singleinstance.h"
 #include "src/mdebug.h"
 #include "src/mdkplayer.h"
@@ -64,10 +64,10 @@ int main(int argc, char *argv[])
 
     mDebug() << "initialising...";
 
-    // Start the player Engine ( actually it only do some stuff not the real video playback )
-    PlayerEngine playerengine (DataHelper::processURL(qApp->arguments().join(",")));
+    // Start the player Controller
+    PlayerController playercontroller (DataHelper::processURL(qApp->arguments().join(",")));
 
-    mDebug() << "PlayerEngine Started ...";
+    mDebug() << "PlayerController Started ...";
 
     // Start the single instance Server to prevent more than one instance at the same time
     SingleInstance singleInstance;
@@ -75,21 +75,21 @@ int main(int argc, char *argv[])
     mDebug() << "SingleInstance localserver Started ...";
 
     // Create a string to store the video URL
-    QString & videoUrl = playerengine.getVideoUrl();
+    QString & videoUrl = playercontroller.getVideoUrl();
 
     mDebug() << "VideoUrl linked ...";
 
 #ifdef Q_OS_MACOS
     FileOpenEvent foef;
-    QObject::connect(&foef,&FileOpenEvent::urlOpened,&playerengine,&PlayerEngine::setVideoUrl);
+    QObject::connect(&foef,&FileOpenEvent::urlOpened,&playercontroller,&PlayerController::setVideoUrl);
     qApp->installEventFilter(&foef);
     mDebug() << "DARWIN fileopener initialised ...";
 #endif
 
     // We here connect the single instance DoAction that is called when a new instance is started
-    // it will call setVideoUrl in PlayerEngine so the current running app will get the url from
+    // it will call setVideoUrl in PlayerController so the current running app will get the url from
     // the newly started instance
-    QObject::connect(&singleInstance,&SingleInstance::doAction,&playerengine,&PlayerEngine::setVideoUrl);
+    QObject::connect(&singleInstance,&SingleInstance::doAction,&playercontroller,&PlayerController::setVideoUrl);
     mDebug() << "SingleInstance connected ...";
 
 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<QmlMDKPlayer>("MDKPlayer", 1, 0, "MDKPlayer");
 
-    context->setContextProperty("PlayerEngine", &playerengine);     // give QML acces to PlayerEngine
+    context->setContextProperty("PlayerController", &playercontroller);     // give QML acces to PlayerEngine
     context->setContextProperty("SingleInstance", &singleInstance); // give QML acces to SingleInstance
 
     // set The main.qml path ( it holds the whole UI )
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     // lets start the video now
-    playerengine.startPlayingMovie();
+    playercontroller.startPlayingMovie();
 
 
     // The Magic code is goes here that make screen capture impossible

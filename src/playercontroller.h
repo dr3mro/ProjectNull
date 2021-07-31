@@ -4,19 +4,18 @@
 //                                     july 2021                                    //
 ////////////////////////////////  As a Freelance Project  ////////////////////////////
 
-#ifndef PLAYERENGINE_H
-#define PLAYERENGINE_H
+#ifndef PLAYERCONTROLLER_H
+#define PLAYERCONTROLLER_H
 
 #include <QObject>
-#include <QTimer>
-#include <QDebug>
+#include "mdebug.h"
 
-class PlayerEngine : public QObject
+class PlayerController : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString m_Url READ getVideoUrl WRITE setVideoUrl NOTIFY videoUrlChanged)
 public:
-    explicit PlayerEngine(const QString & _url = QString(), QObject *parent = nullptr);
+    explicit PlayerController(const QString & _url = QString(), QObject *parent = nullptr);
     // public method to start playback ASAP and squedule the fadeout of playpausebutton
     void startPlayingMovie();
     QString &getVideoUrl();
@@ -26,17 +25,16 @@ public slots:
 
 private:
     QString m_Url; // current videoURL
-    QTimer timer; // timer to hide the playpausebutton after timeout
 
 signals:
     void videoUrlChanged();
    /*
     * Those signals above are connected in the QML file (MIAN.QML)
-    *    PlayerEngine.onHidePlayPauseButton.connect(onHidePlayPauseButton)
+    *    PlayerContrller.onHidePlayPauseButton.connect(onHidePlayPauseButton)
     */
 };
 
-#endif // PLAYERENGINE_H
+#endif // PLAYERCONTROLLER_H
 ////////////////////////////////////////  END  ///////////////////////////////////////
 //                          Screen Capture Proof Video Player                       //
 //                                 Coded by Amr Osman                               //

@@ -39,7 +39,7 @@ HEADERS += \
     src/logger.h \
     src/mdebug.h \
     src/mdkplayer.h \
-    src/playerengine.h \
+    src/playercontroller.h \
     src/singleinstance.h \
     src/win/protocolregister.h
 
@@ -47,7 +47,7 @@ SOURCES += \
         src/datahelper.cpp \
         src/main.cpp \
         src/mdkplayer.cpp \
-        src/playerengine.cpp \
+        src/playercontroller.cpp \
         src/singleinstance.cpp
 
 mac:HEADERS +=\

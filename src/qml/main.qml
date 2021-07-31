@@ -217,7 +217,7 @@ ApplicationWindow {
         anchors.fill: parent
         MDKPlayer {
             id: mediaPlayer
-            source: PlayerEngine.m_Url
+            source: PlayerController.m_Url
             anchors.fill: parent
 
         }
