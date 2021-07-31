@@ -5,7 +5,12 @@
 #include <QOpenGLFramebufferObject>
 #include <QTimer>
 #include "mdebug.h"
+#ifdef Q_OS_MACOS
 #include "src/mac/libs/mdk-sdk/lib/mdk.framework/Versions/A/Headers/Player.h"
+#endif
+#ifdef Q_OS_WIN
+#include "src/win/mdk-sdk/include/mdk/Player.h"
+#endif
 
 using namespace MDK_NS;
 

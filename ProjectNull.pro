@@ -1,10 +1,10 @@
 QT += quick multimedia qml
 
-CONFIG += c++14 static
+CONFIG += c++14
 CONFIG -= qtquickcompiler
 CONFIG += lrelease
 CONFIG += embed_translations
-
+CONFIG += static
 mac:QMAKE_INFO_PLIST = src/mac/info.plist
 mac:LIBS += -framework Carbon
 mac:ICON = src/images/icon.icns
@@ -68,8 +68,12 @@ DISTFILES += \
 
 
 ########
-macx:MDK_SDK = /Users/amr/Repos/ProjectNull/src/mac/libs/mdk-sdk
-INCLUDEPATH += $$MDK_SDK/include
+static|contains(CONFIG, staticlib) {
+  DEFINES += Q_MDK_API
+} else {
+  DEFINES += Q_MDK_API=Q_DECL_EXPORT
+}
+
 contains(QT_ARCH, x.*64) {
   android: MDK_ARCH = x86_64
   else:linux: MDK_ARCH = amd64
@@ -84,17 +88,22 @@ contains(QT_ARCH, x.*64) {
   else:linux: MDK_ARCH = armhf
   else: MDK_ARCH = arm
 }
-static|contains(CONFIG, staticlib) {
-  DEFINES += Q_MDK_API
-} else {
-  DEFINES += Q_MDK_API=Q_DECL_EXPORT
-}
-macx|ios {
+
+macx:MDK_SDK = $$PWD/src/mac/libs/mdk-sdk
+win32:MDK_SDK = $PWD/src/win/mdk-sdk
+
+INCLUDEPATH += $$MDK_SDK/include
+
+win32: LIBS += -L$$PWD/src/win/mdk-sdk/lib/$$MDK_ARCH -lmdk
+win32: DEPENDPATH += $$PWD/src/win/mdk-sdk/lib/$$MDK_ARCH
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/src/win/mdk-sdk/lib/x86/mdk.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/src/win/mdk-sdk/lib/x86/libmdk.a
+
+macx{
   MDK_ARCH=
   QMAKE_CXXFLAGS += -F$$MDK_SDK/lib
   LIBS += -F$$MDK_SDK/lib -F/usr/local/lib -framework mdk
-} else {
-  LIBS += -L$$MDK_SDK/lib/$$MDK_ARCH -lmdk
 }
 
 mac {
@@ -105,7 +114,3 @@ mac {
     QMAKE_LFLAGS *= \'$${QMAKE_LFLAGS_RPATH}$$R\'
   }
 }
-
-
-
-
